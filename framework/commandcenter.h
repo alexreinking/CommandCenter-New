@@ -24,10 +24,11 @@ public: \
     static CommandCenterBase* create(EventLoop *events) { \
         CommandCenterBase* commandCenter = new CLASS_NAME(); \
         commandCenter->setName(typeid(CLASS_NAME).name()); \
-        events->setReceiver(commandCenter);
+        events->setReceiver(commandCenter); \
+        commandCenter->setEventLoop(events); \
 
 #define SUBSYSTEM(SUBSYS, ...) \
-        events->addSubsystem(shared_ptr<Subsystem>(new SUBSYS(events, ##__VA_ARGS__)));
+        events->addSubsystem(shared_ptr<Subsystem>(new SUBSYS(commandCenter, ##__VA_ARGS__)));
 
 #define MUX(name) \
         if(muxConfig(name) == -1) { \
@@ -36,7 +37,6 @@ public: \
         }
 
 #define END_CONFIG \
-        commandCenter->setEventLoop(events); \
         return commandCenter; \
     } \
 }; \

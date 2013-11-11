@@ -23,5 +23,5 @@ BEGIN_CONFIG(MissionControl)
 MUX("BB-CommandCenter")
 SUBSYSTEM(TemperatureSensor, "temp",
           unique_ptr<ADCSensor3008>(new ADCSensor3008(7)))
-SUBSYSTEM(TimerSystem<500>, "die")
+SUBSYSTEM(TimerSystem<2000>, "die")
 END_CONFIG

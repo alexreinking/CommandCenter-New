@@ -8,8 +8,8 @@
 class Subsystem : public Actor
 {
 public:
-    Subsystem(EventLoop *eventLoop, std::string name):
-        Actor(name, eventLoop) {}
+    Subsystem(Actor *parent, std::string name):
+        Actor(name, parent->getEventLoop()) {}
     virtual ~Subsystem() {}
 
     bool isRunning() const { return running; }

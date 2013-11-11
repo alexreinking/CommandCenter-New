@@ -18,8 +18,8 @@ template <int N>
 class TimerSystem : public Subsystem
 {
 public:
-    TimerSystem(EventLoop *events, std::string name) :
-        Subsystem(events, name),
+    TimerSystem(Actor *parent, std::string name) :
+        Subsystem(parent, name),
         name(name) {}
 
     void loop() {

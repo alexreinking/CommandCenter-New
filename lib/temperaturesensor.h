@@ -9,8 +9,8 @@
 class TemperatureSensor : public Subsystem
 {
 public:
-    TemperatureSensor(EventLoop *events, std::string name, std::unique_ptr<ADCSensor3008> adc) :
-        Subsystem(events, name),
+    TemperatureSensor(Actor *parent, std::string name, std::unique_ptr<ADCSensor3008> adc) :
+        Subsystem(parent, name),
         adc(std::move(adc)) {}
     void loop();
 
