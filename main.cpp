@@ -9,12 +9,11 @@ class MissionControl : public CommandCenterBase
 {
 public:
     MissionControl() {
-        on("temperature", [&] (Event *evt) {
-            TemperatureEvent *tempEvt = dynamic_cast<TemperatureEvent*>(evt);
-            cout << "Temp = " << tempEvt->temperature << " degrees C." << endl;
+        on<TemperatureEvent>("temp", [&] (TemperatureEvent *evt) {
+            cout << "Temp = " << evt->temperature << " degrees C." << endl;
         });
 
-        on("die", [&] (Event *evt) {
+        on<TimeEvent>("die", [&] (TimeEvent *evt) {
             die();
         });
     }
@@ -22,7 +21,7 @@ public:
 
 BEGIN_CONFIG(MissionControl)
 MUX("BB-CommandCenter")
-SUBSYSTEM(TemperatureSensor,
+SUBSYSTEM(TemperatureSensor, "temp",
           unique_ptr<ADCSensor3008>(new ADCSensor3008(7)))
-SUBSYSTEM(TimerSystem<2000>, "die")
+SUBSYSTEM(TimerSystem<500>, "die")
 END_CONFIG

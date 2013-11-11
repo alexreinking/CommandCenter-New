@@ -13,8 +13,8 @@ void EventLoop::setReceiver(CommandCenterBase *receiver)
     this->receiver = receiver;
 }
 
-void EventLoop::addSubsystem(std::shared_ptr<Subsystem> subsys) {
-    subsystems.push_back(subsys);
+void EventLoop::addSubsystem(std::shared_ptr<Actor> subsys) {
+    actors.push_back(subsys);
 }
 
 std::mutex queueLock;
@@ -24,15 +24,16 @@ std::condition_variable not_empty;
 int EventLoop::exec()
 {
     std::vector<std::future<int>> exitCodes;
-    for(std::shared_ptr<Subsystem> subsys : subsystems) {
-        exitCodes.push_back(std::async(std::launch::async,
-                                       [=]() {
-            while(subsys->isRunning()) {
-                subsys->loop();
-                std::this_thread::sleep_for(std::chrono::milliseconds(20));
-            }
-            return subsys->getExitCode();
-        }));
+    for(std::shared_ptr<Actor> actor : actors) {
+        if(Subsystem *subsys = dynamic_cast<Subsystem*>(actor.get())) {
+            exitCodes.push_back(std::async(std::launch::async,
+                                           [=]() {
+                while(subsys->isRunning()) {
+                    subsys->loop();
+                }
+                return subsys->getExitCode();
+            }));
+        }
     }
 
     std::unique_lock<std::mutex> l(lock);
@@ -49,9 +50,10 @@ int EventLoop::exec()
     }
 
     // Shutdown all subsystems
-    for(std::shared_ptr<Subsystem> subsys : subsystems) {
-        if(subsys->isRunning())
-            subsys->stop();
+    for(std::shared_ptr<Actor> actor : actors) {
+        if(Subsystem *subsys = dynamic_cast<Subsystem*>(actor.get()))
+            if(subsys->isRunning())
+                subsys->stop();
     }
 
     // Check for errors

@@ -1,11 +1,12 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
+#include "subsystem.h"
 #include "commandcenterbase.h"
 
 void CommandCenterBase::handleEvent(Event *event)
 {
-    std::vector<Callback> receivers = callbacks[event->getName()];
+    std::vector<Callback> receivers = callbacks[event->getSender()->getName()];
     for(Callback &f : receivers) {
         f(event);
     }
@@ -13,6 +14,6 @@ void CommandCenterBase::handleEvent(Event *event)
 
 void CommandCenterBase::die()
 {
-    if(eventLoop)
-        eventLoop->stop();
+    if(getEventLoop())
+        getEventLoop()->stop();
 }

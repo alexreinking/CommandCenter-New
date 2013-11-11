@@ -5,11 +5,12 @@
 #include "eventloop.h"
 #include "commandcenterbase.h"
 
-class Subsystem
+class Subsystem : public Actor
 {
 public:
-    Subsystem(EventLoop *eventLoop):eventLoop(eventLoop) {}
-    virtual ~Subsystem() { }
+    Subsystem(EventLoop *eventLoop, std::string name):
+        Actor(name, eventLoop) {}
+    virtual ~Subsystem() {}
 
     bool isRunning() const { return running; }
     int getExitCode() const { return exitCode; }
@@ -19,14 +20,10 @@ public:
         exitCode = code;
     }
 
+    virtual void handleEvent(Event *) {}
     virtual void loop() = 0;
 
-    void sendEvent(std::shared_ptr<Event> event) {
-        eventLoop->postEvent(event);
-    }
-
 private:
-    EventLoop *eventLoop;
     bool running = true;
     int exitCode = 0;
 };

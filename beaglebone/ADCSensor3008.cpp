@@ -73,7 +73,7 @@ int32_t ADCSensor3008::readConversion()
     if(spiAdcHandle == -1)
         return -1;
 
-    uint8_t tx[] = {(uint8_t)(0x18 + this->adcNumber), 0, 0};
+    uint8_t tx[] = {(uint8_t)(0x18 + adcNumber), 0, 0};
     uint8_t rx[] = {0, 0, 0};
 
     struct spi_ioc_transfer spiTransfer;
@@ -84,7 +84,7 @@ int32_t ADCSensor3008::readConversion()
     spiTransfer.speed_hz = 0;
     spiTransfer.bits_per_word = 0;
 
-    int result = ioctl(this->spiAdcHandle, SPI_IOC_MESSAGE(1), &spiTransfer);
+    int result = ioctl(spiAdcHandle, SPI_IOC_MESSAGE(1), &spiTransfer);
     if (result == -1)
         return -1;
 
@@ -92,7 +92,7 @@ int32_t ADCSensor3008::readConversion()
     // first two bits of the byte 1 are no good either. (time it takes to do adc conversion).
     // Then we only want the top four bits of byte 2, as the 10-bit total value ends there.
     int32_t adcValue = ((rx[1] & 0x3F) << 4) | ((rx[2] & 0xF0) >> 4);
-    this->lastConvertedValue = adcValue;
+    lastConvertedValue = adcValue;
 
     return adcValue;
 }

@@ -1,6 +1,7 @@
 #ifndef COMMANDCENTER_H
 #define COMMANDCENTER_H
 
+#include <typeinfo>
 #include <cstdlib>
 #include <ctime>
 #include <memory>
@@ -22,6 +23,7 @@ class Injector\
 public: \
     static CommandCenterBase* create(EventLoop *events) { \
         CommandCenterBase* commandCenter = new CLASS_NAME(); \
+        commandCenter->setName(typeid(CLASS_NAME).name()); \
         events->setReceiver(commandCenter);
 
 #define SUBSYSTEM(SUBSYS, ...) \
