@@ -1,3 +1,4 @@
+#include <thread>
 #include <iostream>
 #include <memory>
 #include "framework/commandcenter.h"
@@ -14,6 +15,8 @@ public:
         });
 
         on<TimeEvent>("die", [&] (TimeEvent *evt) {
+            cout << "Thread " << this_thread::get_id() << " shutting down..." << endl;
+            sendEvent("temp", make_shared<Event>(this));
             die();
         });
     }

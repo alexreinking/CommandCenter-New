@@ -1,6 +1,13 @@
+#include <iostream>
 #include <thread>
 #include <chrono>
 #include "temperaturesensor.h"
+using namespace std;
+
+void TemperatureSensor::handleEvent(Event *)
+{
+    cout << "TemperatureSensor got an event in thread " << this_thread::get_id() << "." << endl;
+}
 
 void TemperatureSensor::loop()
 {
@@ -15,6 +22,7 @@ void TemperatureSensor::loop()
         result = 50 * ((rand() % 1000) / 1000.0);
     }
 
-    sendEvent(std::shared_ptr<Event>(new TemperatureEvent(result)));
-    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    sendEvent(shared_ptr<Event>(new TemperatureEvent(result)));
+    this_thread::sleep_for(chrono::milliseconds(20));
+    cout << "TemperatureSensor sent an event from thread " << this_thread::get_id() << "." << endl;
 }

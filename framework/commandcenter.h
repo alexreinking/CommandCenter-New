@@ -28,7 +28,7 @@ public: \
         commandCenter->setEventLoop(events); \
 
 #define SUBSYSTEM(SUBSYS, ...) \
-        events->addSubsystem(shared_ptr<Subsystem>(new SUBSYS(commandCenter, ##__VA_ARGS__)));
+        events->addActor(shared_ptr<Subsystem>(new SUBSYS(commandCenter, ##__VA_ARGS__)));
 
 #define MUX(name) \
         if(muxConfig(name) == -1) { \

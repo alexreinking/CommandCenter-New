@@ -1,15 +1,19 @@
 #ifndef SUBSYSTEM_H
 #define SUBSYSTEM_H
 
+#include <iostream>
 #include <string>
 #include "eventloop.h"
 #include "commandcenterbase.h"
+using std::cout;
+using std::endl;
 
 class Subsystem : public Actor
 {
 public:
     Subsystem(Actor *parent, std::string name):
-        Actor(name, parent->getEventLoop()) {}
+        Actor(name, parent->getEventLoop()),
+        parent(parent) {}
     virtual ~Subsystem() {}
 
     bool isRunning() const { return running; }
@@ -23,7 +27,13 @@ public:
     virtual void handleEvent(Event *) {}
     virtual void loop() = 0;
 
+protected:
+    virtual void sendEvent(std::shared_ptr<Event> event) {
+        Actor::sendEvent(parent->getName(), event);
+    }
+
 private:
+    Actor *parent;
     bool running = true;
     int exitCode = 0;
 };

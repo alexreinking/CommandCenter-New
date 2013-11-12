@@ -12,6 +12,9 @@ public:
     TemperatureSensor(Actor *parent, std::string name, std::unique_ptr<ADCSensor3008> adc) :
         Subsystem(parent, name),
         adc(std::move(adc)) {}
+
+    void handleEvent(Event *);
+
     void loop();
 
 private:
@@ -21,10 +24,7 @@ private:
 class TemperatureEvent : public Event
 {
 public:
-    TemperatureEvent(double temperature) :
-        temperature(temperature)
-    {}
-
+    TemperatureEvent(double temperature) : temperature(temperature) {}
     double temperature;
 };
 

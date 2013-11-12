@@ -13,13 +13,9 @@ void EventLoop::setReceiver(CommandCenterBase *receiver)
     this->receiver = receiver;
 }
 
-void EventLoop::addSubsystem(std::shared_ptr<Actor> subsys) {
+void EventLoop::addActor(std::shared_ptr<Actor> subsys) {
     actors.push_back(subsys);
 }
-
-std::mutex queueLock;
-std::mutex lock;
-std::condition_variable not_empty;
 
 int EventLoop::exec()
 {
@@ -36,18 +32,8 @@ int EventLoop::exec()
         }
     }
 
-    std::unique_lock<std::mutex> l(lock);
-    while(running) {
-        not_empty.wait(l);
-        if(queueLock.try_lock()) {   // Once we get the chance,
-            while(!events.empty()) { // Dispatch all events
-                std::shared_ptr<Event> nextEvent = events.front();
-                events.pop();
-                receiver->handleEvent(nextEvent.get());
-            }
-            queueLock.unlock();
-        }
-    }
+    while(running)
+        processEvents();
 
     // Shutdown all subsystems
     for(std::shared_ptr<Actor> actor : actors) {
@@ -67,10 +53,45 @@ int EventLoop::exec()
     return code;
 }
 
-void EventLoop::postEvent(std::shared_ptr<Event> event)
+std::mutex queueLock;
+std::mutex emptyLock;
+std::condition_variable not_empty;
+
+void EventLoop::postEvent(std::string recipient, std::shared_ptr<Event> event)
 {
     queueLock.lock();
-    events.push(event);
+    events.push(make_pair(recipient, event));
     queueLock.unlock();
     not_empty.notify_all();
+}
+
+void EventLoop::processEvents()
+{
+    std::unique_lock<std::mutex> l(emptyLock);
+    not_empty.wait(l);
+    if(queueLock.try_lock()) {   // Once we get the chance,
+        while(!events.empty()) { // Dispatch all events
+            Message nextMessage = events.front();
+            std::shared_ptr<Event> nextEvent = nextMessage.second;
+            events.pop();
+            if(lookupActor(nextMessage.first)) {
+                queueLock.unlock();
+                lookupActor(nextMessage.first)->handleEvent(nextEvent.get());
+                queueLock.lock();
+            }
+        }
+        queueLock.unlock();
+    }
+}
+
+Actor *EventLoop::lookupActor(const std::string &name)
+{
+    if(receiver->getName() == name)
+        return receiver;
+    for(std::shared_ptr<Actor> actor : actors) {
+        if(actor->getName() == name)
+            return actor.get();
+    }
+    cout << "Could not find \"" << name << "\"" << endl;
+    return nullptr;
 }

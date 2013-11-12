@@ -1,6 +1,7 @@
 #ifndef EVENTLOOP_H
 #define EVENTLOOP_H
 
+#include <utility>
 #include <queue>
 #include <memory>
 #include <vector>
@@ -23,24 +24,29 @@ private:
     Actor *sender;
 };
 
+typedef std::pair<std::string, std::shared_ptr<Event>> Message;
+
 class EventLoop
 {
 public:
     EventLoop();
 
     void setReceiver(CommandCenterBase *receiver);
-    void addSubsystem(std::shared_ptr<Actor> subsys);
+    void addActor(std::shared_ptr<Actor> subsys);
 
     void stop() { running = false; }
     int exec();
 
-    void postEvent(std::shared_ptr<Event> event);
+    void postEvent(std::string recipient, std::shared_ptr<Event> event);
 
 private:
     bool running = true;
     CommandCenterBase *receiver;
     std::vector<std::shared_ptr<Actor>> actors;
-    std::queue<std::shared_ptr<Event>> events;
+    std::queue<Message> events;
+
+    void processEvents();
+    Actor *lookupActor(const std::string &name);
 };
 
 class Actor
@@ -60,9 +66,9 @@ public:
     EventLoop *getEventLoop() const { return eventLoop; }
 
 protected:
-    virtual void sendEvent(std::shared_ptr<Event> event) {
+    virtual void sendEvent(std::string to, std::shared_ptr<Event> event) {
         event->setSender(this);
-        eventLoop->postEvent(event);
+        eventLoop->postEvent(to, event);
     }
 
 private:
