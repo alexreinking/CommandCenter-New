@@ -4,11 +4,6 @@
 #include "temperaturesensor.h"
 using namespace std;
 
-void TemperatureSensor::handleEvent(Event *)
-{
-    cout << "TemperatureSensor got an event in thread " << this_thread::get_id() << "." << endl;
-}
-
 void TemperatureSensor::loop()
 {
     double result;
@@ -24,5 +19,4 @@ void TemperatureSensor::loop()
 
     sendEvent(shared_ptr<Event>(new TemperatureEvent(result)));
     this_thread::sleep_for(chrono::milliseconds(20));
-    cout << "TemperatureSensor sent an event from thread " << this_thread::get_id() << "." << endl;
 }

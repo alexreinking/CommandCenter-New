@@ -2,9 +2,12 @@
 #include <chrono>
 #include <mutex>
 #include <future>
+#include <iostream>
 #include "eventloop.h"
 #include "commandcenterbase.h"
 #include "subsystem.h"
+using std::cerr;
+using std::endl;
 
 EventLoop::EventLoop() { }
 
@@ -92,6 +95,6 @@ Actor *EventLoop::lookupActor(const std::string &name)
         if(actor->getName() == name)
             return actor.get();
     }
-    cout << "Could not find \"" << name << "\"" << endl;
+    cerr << "Could not find \"" << name << "\"" << endl;
     return nullptr;
 }

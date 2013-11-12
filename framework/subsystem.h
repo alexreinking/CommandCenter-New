@@ -1,12 +1,9 @@
 #ifndef SUBSYSTEM_H
 #define SUBSYSTEM_H
 
-#include <iostream>
 #include <string>
 #include "eventloop.h"
 #include "commandcenterbase.h"
-using std::cout;
-using std::endl;
 
 class Subsystem : public Actor
 {

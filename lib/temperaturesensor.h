@@ -13,8 +13,6 @@ public:
         Subsystem(parent, name),
         adc(std::move(adc)) {}
 
-    void handleEvent(Event *);
-
     void loop();
 
 private:

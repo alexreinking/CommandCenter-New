@@ -19,8 +19,7 @@ class TimerSystem : public Subsystem
 {
 public:
     TimerSystem(Actor *parent, std::string name) :
-        Subsystem(parent, name),
-        name(name) {}
+        Subsystem(parent, name) {}
 
     void loop() {
         time_point<system_clock> start, end;
@@ -31,9 +30,6 @@ public:
         auto elapsedMillis = duration_cast<milliseconds>(end-start);
         sendEvent(shared_ptr<Event>(new TimeEvent(elapsedMillis.count())));
     }
-
-private:
-    std::string name;
 };
 
 #endif // TIMERSYSTEM_H

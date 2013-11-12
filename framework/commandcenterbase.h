@@ -19,7 +19,7 @@ public:
 
 protected:
     template <typename Arg>
-    void on(std::string sender, std::function<void(Arg*)> callback) {
+    void on(const std::string &sender, std::function<void(Arg*)> callback) {
         callbacks[sender].push_back([callback] (Event *evt) {
             if(Arg *arg = dynamic_cast<Arg*>(evt))
                 callback(arg);
