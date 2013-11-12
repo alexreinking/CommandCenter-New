@@ -34,10 +34,8 @@ int EventLoop::exec()
     // Shutdown all subsystems
     for(std::shared_ptr<Actor> actor : actors) {
         if(Subsystem *subsys = dynamic_cast<Subsystem*>(actor.get()))
-            if(subsys->isRunning()) {
-                subsys->process();
+            if(subsys->isRunning())
                 subsys->stop();
-            }
     }
 
     // Check for errors

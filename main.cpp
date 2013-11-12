@@ -13,15 +13,14 @@ public:
         });
 
         on<TimeEvent>("die", [&] (TimeEvent *evt) {
-            sendEvent("temp", make_shared<TemperatureEvent>(0));
             die();
         });
     }
 };
 
 BEGIN_CONFIG(MissionControl)
-MUX("BB-CommandCenter")
+MUX("BB-CommandCenter");
 SUBSYSTEM(TemperatureSensor, "temp",
-          unique_ptr<ADCSensor3008>(new ADCSensor3008(7)))
-SUBSYSTEM(TimerSystem<500>, "die")
+          unique_ptr<ADCSensor3008>(new ADCSensor3008(7)));
+SUBSYSTEM(TimerSystem<2000>, "die");
 END_CONFIG

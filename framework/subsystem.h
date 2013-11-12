@@ -18,7 +18,7 @@ public:
     bool isRunning() const { return running; }
     int getExitCode() const { return exitCode; }
 
-    void stop(int code = 0) {
+    virtual void stop(int code = 0) {
         running = false;
         exitCode = code;
     }
@@ -30,6 +30,11 @@ public:
 protected:
     virtual void sendEvent(std::shared_ptr<Event> event) {
         Actor::sendEvent(parent->getName(), event);
+    }
+
+    template <typename Arg>
+    void on(std::function<void(Arg*)> callback) {
+        Actor::on(parent->getName(), callback);
     }
 
 private:

@@ -9,7 +9,7 @@ TemperatureSensor::TemperatureSensor(Actor *parent, std::string name,
     Subsystem(parent, name),
     adc(std::move(adc))
 {
-    on<TemperatureEvent>(parent->getName(), [&] (TemperatureEvent *evt){
+    on<TemperatureEvent>([&] (TemperatureEvent *evt){
         std::cout << "Got an event in thread " << std::this_thread::get_id() << std::endl;
     });
 }
@@ -27,6 +27,6 @@ void TemperatureSensor::loop()
         result = 50 * ((rand() % 1000) / 1000.0);
     }
 
-    sendEvent(shared_ptr<Event>(new TemperatureEvent(result)));
-    this_thread::sleep_for(chrono::milliseconds(20));
+    sendEvent(make_shared<TemperatureEvent>(result));
+    this_thread::sleep_for(chrono::milliseconds(50));
 }
