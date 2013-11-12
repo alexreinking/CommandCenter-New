@@ -21,14 +21,14 @@ using std::endl;
 class Injector\
 { \
 public: \
-    static CommandCenterBase* create(EventLoop *events) { \
-        CommandCenterBase* commandCenter = new CLASS_NAME(); \
-        commandCenter->setName(typeid(CLASS_NAME).name()); \
-        events->setReceiver(commandCenter); \
+    static shared_ptr<CommandCenterBase> create(EventLoop *events) { \
+        auto commandCenter = shared_ptr<CommandCenterBase>(new CLASS_NAME()); \
+        commandCenter->setName(#CLASS_NAME); \
+        events->addActor(commandCenter); \
         commandCenter->setEventLoop(events); \
 
 #define SUBSYSTEM(SUBSYS, ...) \
-        events->addActor(shared_ptr<Subsystem>(new SUBSYS(commandCenter, ##__VA_ARGS__)));
+        events->addActor(shared_ptr<Subsystem>(new SUBSYS(commandCenter.get(), ##__VA_ARGS__)));
 
 #define MUX(name) \
         if(muxConfig(name) == -1) { \
@@ -43,7 +43,7 @@ public: \
 int main() {\
     srand(time(NULL)); \
     EventLoop events; \
-    unique_ptr<CommandCenterBase> userProgram(Injector::create(&events)); \
+    auto userProgram(Injector::create(&events)); \
     return events.exec(); \
 }
 

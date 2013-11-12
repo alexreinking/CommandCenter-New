@@ -1,6 +1,4 @@
-#include <thread>
 #include <iostream>
-#include <memory>
 #include "framework/commandcenter.h"
 #include "lib/temperaturesensor.h"
 #include "lib/timersystem.h"
@@ -15,6 +13,7 @@ public:
         });
 
         on<TimeEvent>("die", [&] (TimeEvent *evt) {
+            sendEvent("temp", make_shared<TemperatureEvent>(0));
             die();
         });
     }
@@ -24,5 +23,5 @@ BEGIN_CONFIG(MissionControl)
 MUX("BB-CommandCenter")
 SUBSYSTEM(TemperatureSensor, "temp",
           unique_ptr<ADCSensor3008>(new ADCSensor3008(7)))
-SUBSYSTEM(TimerSystem<2000>, "die")
+SUBSYSTEM(TimerSystem<500>, "die")
 END_CONFIG

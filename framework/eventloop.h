@@ -8,7 +8,6 @@
 #include <string>
 
 class Actor;
-class CommandCenterBase;
 class EventLoop;
 
 class Event
@@ -31,7 +30,6 @@ class EventLoop
 public:
     EventLoop();
 
-    void setReceiver(CommandCenterBase *receiver);
     void addActor(std::shared_ptr<Actor> subsys);
 
     void stop() { running = false; }
@@ -41,39 +39,11 @@ public:
 
 private:
     bool running = true;
-    CommandCenterBase *receiver;
     std::vector<std::shared_ptr<Actor>> actors;
     std::queue<Message> events;
 
     void processEvents();
     Actor *lookupActor(const std::string &name);
-};
-
-class Actor
-{
-public:
-    Actor(std::string name = "", EventLoop *eventLoop = nullptr):
-        eventLoop(eventLoop),
-        name(name) {}
-
-    virtual ~Actor() {}
-    virtual void handleEvent(Event *event) = 0;
-
-    void setName(const std::string &name) { this->name = name; }
-    std::string getName() const { return name; }
-
-    void setEventLoop(EventLoop *evt) { eventLoop = evt; }
-    EventLoop *getEventLoop() const { return eventLoop; }
-
-protected:
-    virtual void sendEvent(std::string to, std::shared_ptr<Event> event) {
-        event->setSender(this);
-        eventLoop->postEvent(to, event);
-    }
-
-private:
-    EventLoop *eventLoop;
-    std::string name;
 };
 
 #endif // EVENTLOOP_H

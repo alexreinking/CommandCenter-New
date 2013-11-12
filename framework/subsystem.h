@@ -1,9 +1,11 @@
 #ifndef SUBSYSTEM_H
 #define SUBSYSTEM_H
 
+#include <mutex>
+#include <queue>
 #include <string>
 #include "eventloop.h"
-#include "commandcenterbase.h"
+#include "actor.h"
 
 class Subsystem : public Actor
 {
@@ -21,7 +23,8 @@ public:
         exitCode = code;
     }
 
-    virtual void handleEvent(Event *) {}
+    virtual void handleEvent(shared_ptr<Event>);
+    virtual void process();
     virtual void loop() = 0;
 
 protected:
@@ -30,6 +33,8 @@ protected:
     }
 
 private:
+    std::queue<shared_ptr<Event>> events;
+    std::mutex queueMutex;
     Actor *parent;
     bool running = true;
     int exitCode = 0;

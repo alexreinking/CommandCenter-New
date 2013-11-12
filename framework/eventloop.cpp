@@ -2,19 +2,11 @@
 #include <chrono>
 #include <mutex>
 #include <future>
-#include <iostream>
 #include "eventloop.h"
 #include "commandcenterbase.h"
 #include "subsystem.h"
-using std::cerr;
-using std::endl;
 
 EventLoop::EventLoop() { }
-
-void EventLoop::setReceiver(CommandCenterBase *receiver)
-{
-    this->receiver = receiver;
-}
 
 void EventLoop::addActor(std::shared_ptr<Actor> subsys) {
     actors.push_back(subsys);
@@ -28,6 +20,7 @@ int EventLoop::exec()
             exitCodes.push_back(std::async(std::launch::async,
                                            [=]() {
                 while(subsys->isRunning()) {
+                    subsys->process();
                     subsys->loop();
                 }
                 return subsys->getExitCode();
@@ -41,8 +34,10 @@ int EventLoop::exec()
     // Shutdown all subsystems
     for(std::shared_ptr<Actor> actor : actors) {
         if(Subsystem *subsys = dynamic_cast<Subsystem*>(actor.get()))
-            if(subsys->isRunning())
+            if(subsys->isRunning()) {
+                subsys->process();
                 subsys->stop();
+            }
     }
 
     // Check for errors
@@ -79,7 +74,7 @@ void EventLoop::processEvents()
             events.pop();
             if(lookupActor(nextMessage.first)) {
                 queueLock.unlock();
-                lookupActor(nextMessage.first)->handleEvent(nextEvent.get());
+                lookupActor(nextMessage.first)->handleEvent(nextEvent);
                 queueLock.lock();
             }
         }
@@ -89,12 +84,9 @@ void EventLoop::processEvents()
 
 Actor *EventLoop::lookupActor(const std::string &name)
 {
-    if(receiver->getName() == name)
-        return receiver;
     for(std::shared_ptr<Actor> actor : actors) {
         if(actor->getName() == name)
             return actor.get();
     }
-    cerr << "Could not find \"" << name << "\"" << endl;
     return nullptr;
 }

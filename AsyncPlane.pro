@@ -14,7 +14,9 @@ SOURCES += main.cpp \
     lib/temperaturesensor.cpp \
     beaglebone/_impl/Gpio.c \
     beaglebone/muxConfig.cpp \
-    beaglebone/ADCSensor3008.cpp
+    beaglebone/ADCSensor3008.cpp \
+    framework/actor.cpp \
+    framework/subsystem.cpp
 
 HEADERS += \
     framework/commandcenter.h \
@@ -26,5 +28,6 @@ HEADERS += \
     beaglebone/_impl/Gpio.h \
     beaglebone/_impl/am335x.h \
     beaglebone/muxConfig.h \
-    beaglebone/ADCSensor3008.h
+    beaglebone/ADCSensor3008.h \
+    framework/actor.h
 

@@ -4,6 +4,16 @@
 #include "temperaturesensor.h"
 using namespace std;
 
+TemperatureSensor::TemperatureSensor(Actor *parent, std::string name,
+                                     std::unique_ptr<ADCSensor3008> adc) :
+    Subsystem(parent, name),
+    adc(std::move(adc))
+{
+    on<TemperatureEvent>(parent->getName(), [&] (TemperatureEvent *evt){
+        std::cout << "Got an event in thread " << std::this_thread::get_id() << std::endl;
+    });
+}
+
 void TemperatureSensor::loop()
 {
     double result;
