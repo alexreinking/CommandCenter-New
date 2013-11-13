@@ -28,5 +28,5 @@ void TemperatureSensor::loop()
     }
 
     sendEvent(make_shared<TemperatureEvent>(result));
-    this_thread::sleep_for(chrono::milliseconds(50));
+//    this_thread::sleep_for(chrono::milliseconds(50));
 }

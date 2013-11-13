@@ -1,8 +1,13 @@
 #include <iostream>
+#include <functional>
 #include "framework/commandcenter.h"
 #include "lib/temperaturesensor.h"
 #include "lib/timersystem.h"
 using namespace std;
+using namespace std::placeholders;
+
+//Can also use a member function via
+//bind(MissionControl::handleTemperature, this, std::placeholders::_1);
 
 class MissionControl : public CommandCenterBase
 {

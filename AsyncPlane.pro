@@ -16,7 +16,8 @@ SOURCES += main.cpp \
     beaglebone/muxConfig.cpp \
     beaglebone/ADCSensor3008.cpp \
     framework/actor.cpp \
-    framework/subsystem.cpp
+    framework/subsystem.cpp \
+    beaglebone/Uart.cpp
 
 HEADERS += \
     framework/commandcenter.h \
@@ -29,5 +30,6 @@ HEADERS += \
     beaglebone/_impl/am335x.h \
     beaglebone/muxConfig.h \
     beaglebone/ADCSensor3008.h \
-    framework/actor.h
+    framework/actor.h \
+    beaglebone/Uart.h
 

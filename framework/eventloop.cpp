@@ -49,15 +49,13 @@ int EventLoop::exec()
     return code;
 }
 
-std::mutex queueLock;
 std::mutex emptyLock;
 std::condition_variable not_empty;
 
 void EventLoop::postEvent(std::string recipient, std::shared_ptr<Event> event)
 {
-    queueLock.lock();
+    std::unique_lock<std::mutex> l(emptyLock);
     events.push(make_pair(recipient, event));
-    queueLock.unlock();
     not_empty.notify_all();
 }
 
@@ -65,18 +63,14 @@ void EventLoop::processEvents()
 {
     std::unique_lock<std::mutex> l(emptyLock);
     not_empty.wait(l);
-    if(queueLock.try_lock()) {   // Once we get the chance,
-        while(!events.empty()) { // Dispatch all events
-            Message nextMessage = events.front();
-            std::shared_ptr<Event> nextEvent = nextMessage.second;
-            events.pop();
-            if(lookupActor(nextMessage.first)) {
-                queueLock.unlock();
-                lookupActor(nextMessage.first)->handleEvent(nextEvent);
-                queueLock.lock();
-            }
+
+    while(!events.empty()) { // Dispatch all events
+        Message nextMessage = events.front();
+        std::shared_ptr<Event> nextEvent = nextMessage.second;
+        events.pop();
+        if(lookupActor(nextMessage.first)) {
+            lookupActor(nextMessage.first)->handleEvent(nextEvent);
         }
-        queueLock.unlock();
     }
 }
 
