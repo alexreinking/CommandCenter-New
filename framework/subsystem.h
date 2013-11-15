@@ -1,6 +1,7 @@
 #ifndef SUBSYSTEM_H
 #define SUBSYSTEM_H
 
+#include <memory>
 #include <mutex>
 #include <queue>
 #include <string>
@@ -15,7 +16,7 @@ public:
         parent(parent) {}
     virtual ~Subsystem() {}
 
-    bool isRunning() const { return running; }
+    inline bool isRunning() const { return running; }
     int getExitCode() const { return exitCode; }
 
     virtual void stop(int code = 0) {
@@ -41,6 +42,7 @@ private:
     std::queue<shared_ptr<Event>> events;
     std::mutex queueMutex;
     Actor *parent;
+
     bool running = true;
     int exitCode = 0;
 };

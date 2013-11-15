@@ -1,10 +1,13 @@
 #include <thread>
 #include <chrono>
+#include <condition_variable>
 #include <mutex>
-#include <future>
+#include <iostream>
 #include "eventloop.h"
 #include "commandcenterbase.h"
 #include "subsystem.h"
+using std::cerr;
+using std::endl;
 
 EventLoop::EventLoop() { }
 
@@ -14,11 +17,10 @@ void EventLoop::addActor(std::shared_ptr<Actor> subsys) {
 
 int EventLoop::exec()
 {
-    std::vector<std::future<int>> exitCodes;
+    std::vector<std::thread> workers;
     for(std::shared_ptr<Actor> actor : actors) {
         if(Subsystem *subsys = dynamic_cast<Subsystem*>(actor.get())) {
-            exitCodes.push_back(std::async(std::launch::async,
-                                           [=]() {
+            workers.push_back(std::thread([=]() {
                 while(subsys->isRunning()) {
                     subsys->process();
                     subsys->loop();
@@ -38,23 +40,21 @@ int EventLoop::exec()
                 subsys->stop();
     }
 
-    // Check for errors
-    int code = 0;
-    for(std::future<int> &fut : exitCodes) {
-        if(fut.get() != 0)
-            code = fut.get();
+    for(auto& thread : workers) {
+        thread.join();
     }
 
     // Return 0 or some error
-    return code;
+    return 0;
 }
 
 std::mutex emptyLock;
+std::recursive_mutex queueLock;
 std::condition_variable not_empty;
 
 void EventLoop::postEvent(std::string recipient, std::shared_ptr<Event> event)
 {
-    std::unique_lock<std::mutex> l(emptyLock);
+    std::unique_lock<std::recursive_mutex> q(queueLock);
     events.push(make_pair(recipient, event));
     not_empty.notify_all();
 }
@@ -64,6 +64,7 @@ void EventLoop::processEvents()
     std::unique_lock<std::mutex> l(emptyLock);
     not_empty.wait(l);
 
+    std::unique_lock<std::recursive_mutex> q(queueLock);
     while(!events.empty()) { // Dispatch all events
         Message nextMessage = events.front();
         std::shared_ptr<Event> nextEvent = nextMessage.second;

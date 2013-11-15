@@ -7,7 +7,11 @@
 #include <memory>
 #include <utility>
 #include <iostream>
-#include "beaglebone/muxConfig.h"
+#include <unistd.h>
+#include <fcntl.h>
+#include <termios.h>
+#include <sys/select.h>
+#include "../beaglebone/muxConfig.h"
 #include "commandcenterbase.h"
 #include "eventloop.h"
 #include "subsystem.h"
@@ -28,7 +32,7 @@ public: \
         commandCenter->setEventLoop(events); \
 
 #define SUBSYSTEM(SUBSYS, ...) \
-        events->addActor(shared_ptr<Subsystem>(new SUBSYS(commandCenter.get(), ##__VA_ARGS__)));
+        commandCenter->addSubsystem<SUBSYS>(commandCenter.get(), ##__VA_ARGS__);
 
 #define MUX(name) \
         if(muxConfig(name) == -1) { \

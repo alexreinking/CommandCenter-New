@@ -19,12 +19,18 @@ class TimerSystem : public Subsystem
 {
 public:
     TimerSystem(Actor *parent, std::string name) :
-        Subsystem(parent, name) {}
+        Subsystem(parent, name) { }
 
     void loop() {
         time_point<system_clock> start, end;
+        register int i = 0;
+
         start = system_clock::now();
-        std::this_thread::sleep_for(milliseconds(N));
+//        while(++i < N) {
+//            if(!isRunning())
+//                return;
+            std::this_thread::sleep_for(milliseconds(N));
+//        }
         end = system_clock::now();
 
         auto elapsedMillis = duration_cast<milliseconds>(end-start);

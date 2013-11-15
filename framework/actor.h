@@ -27,10 +27,16 @@ public:
     void setEventLoop(EventLoop *evt) { eventLoop = evt; }
     EventLoop *getEventLoop() const { return eventLoop; }
 
+    template <typename Sys, typename ...Args>
+    void addSubsystem(Args&&... args) {
+        getEventLoop()->addActor(std::make_shared<Sys>(std::forward<Args>(args)...));
+    }
+
 protected:
     std::unordered_map<std::string, std::vector<Callback>> callbacks;
 
     virtual void sendEvent(std::string to, std::shared_ptr<Event> event);
+
     template <typename Arg>
     void on(const std::string &sender, std::function<void(Arg*)> callback) {
         callbacks[sender].push_back([callback] (Event *evt) {
