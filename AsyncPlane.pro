@@ -3,9 +3,9 @@ CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
 
-QMAKE_CXX = /home/alex/bin/gcc-linaro-arm-linux-gnueabihf-4.8-2013.10_linux/bin/arm-linux-gnueabihf-g++
-QMAKE_CC = /home/alex/bin/gcc-linaro-arm-linux-gnueabihf-4.8-2013.10_linux/bin/arm-linux-gnueabihf-g++
-QMAKE_LINK = /home/alex/bin/gcc-linaro-arm-linux-gnueabihf-4.8-2013.10_linux/bin/arm-linux-gnueabihf-g++
+QMAKE_CXX = arm-linux-gnueabihf-g++
+QMAKE_CC = arm-linux-gnueabihf-g++
+QMAKE_LINK = arm-linux-gnueabihf-g++
 
 QMAKE_CXXFLAGS -= -m64
 QMAKE_CFLAGS -= -m64
