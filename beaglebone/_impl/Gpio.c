@@ -30,7 +30,7 @@ static char mapped = FALSE;
  *
  * @returns whether or not the mapping of /dev/mem into memory was successful
  */
-int init() {
+int gpioInit() {
 	if(!mapped) {
 		int fd;
 		fd = open("/dev/mem", O_RDWR);
@@ -84,7 +84,7 @@ int pinMode(PIN pin, unsigned char direction) {
  * @returns output was successfully written
  */
 int digitalWrite(PIN p, uint8_t mode) {
-	init();
+    gpioInit();
 	map[(p.gpio_bank-MMAP_OFFSET+GPIO_OE)/4] &= ~(1<<p.bank_id);
 	if(mode == HIGH) map[(p.gpio_bank-MMAP_OFFSET+GPIO_DATAOUT)/4] |= 1<<p.bank_id;
 	else map[(p.gpio_bank-MMAP_OFFSET+GPIO_DATAOUT)/4] &= ~(1<<p.bank_id);
@@ -100,7 +100,7 @@ int digitalWrite(PIN p, uint8_t mode) {
  * @returns the value of the pin
  */
 int digitalRead(PIN p) {
-	init();
+    gpioInit();
 	return (map[(p.gpio_bank-MMAP_OFFSET+GPIO_DATAIN)/4] & (1<<p.bank_id))>>p.bank_id;
 }
 
@@ -109,7 +109,7 @@ int digitalRead(PIN p) {
  * Initializee the Analog-Digital Converter
  */
 int adc_init() {
-    int ret = init();
+    int ret = gpioInit();
 
 	// enable the CM_WKUP_ADC_TSC_CLKCTRL with CM_WKUP_MODUELEMODE_ENABLE
 	map[(CM_WKUP_ADC_TSC_CLKCTRL-MMAP_OFFSET)/4] |= CM_WKUP_MODULEMODE_ENABLE;
@@ -153,7 +153,7 @@ int adc_init() {
  * @returns the analog value of pin p
  */
 int analogRead(PIN p) {
-	init();
+    gpioInit();
 	
 	// the clock module is not enabled
 	if(map[(CM_WKUP_ADC_TSC_CLKCTRL-MMAP_OFFSET)/4] & CM_WKUP_IDLEST_DISABLED)
