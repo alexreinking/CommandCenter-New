@@ -1,7 +1,7 @@
 #ifndef ADC_SENSOR_3008
 #define ADC_SENSOR_3008
 
-#include <stdint-gcc.h>
+#include <stdint.h>
 
 class ADCSensor3008
 {

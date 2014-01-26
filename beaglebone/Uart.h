@@ -1,7 +1,7 @@
 #ifndef UART_WRAPPER
 #define UART_WRAPPER
 
-#include <stdint-gcc.h>
+#include <stdint.h>
 #include <termios.h>
 #include "TTYDevice.h"
 

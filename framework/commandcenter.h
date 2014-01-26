@@ -11,6 +11,7 @@
 #include <fcntl.h>
 #include <termios.h>
 #include <sys/select.h>
+#include <signal.h>
 #include "../beaglebone/muxConfig.h"
 #include "commandcenterbase.h"
 #include "eventloop.h"
@@ -44,9 +45,17 @@ public: \
         return commandCenter; \
     } \
 }; \
+namespace framework { \
+    std::function<void(int)> sigHandler;\
+    void handleSigInt(int a) { \
+        sigHandler(a);\
+    } \
+};\
 int main() {\
     srand(time(NULL)); \
     EventLoop events; \
+    framework::sigHandler = [&] (int _) { events.stop(); }; \
+    signal(SIGINT, framework::handleSigInt); \
     auto userProgram(Injector::create(&events)); \
     return events.exec(); \
 }

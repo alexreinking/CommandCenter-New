@@ -9,10 +9,10 @@ Uart::Uart(int uartNumber, int32_t baudRate)
 {
     uartNumber = (uartNumber < 1) ? 1 : ((uartNumber > 5) ? 5 : uartNumber);
 
-    char cfgString[] = "uart1pinmux";
+    char cfgString[] = "BB-UART0";
     char fileName[] = "/dev/ttyO0";
     // Play with the characters in the name to get the paths right;
-    cfgString[4] += uartNumber;
+    cfgString[7] += uartNumber;
     fileName[9] += uartNumber;
 
     if (muxConfig(cfgString) == 0)

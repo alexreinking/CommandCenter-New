@@ -23,7 +23,7 @@ public:
 
     void loop() {
         time_point<system_clock> start, end;
-        register int i = 0;
+        int i = 0;
 
         start = system_clock::now();
 //        while(++i < N) {
