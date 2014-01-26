@@ -16,6 +16,14 @@ QMAKE_CXXFLAGS_WARN_ON = -Wl,--no-as-needed
 QMAKE_LFLAGS += -Wl,--no-as-needed
 LIBS += -pthread
 
+# Win32 fixes
+QMAKE_CXXFLAGS -= -fno-keep-inline-dllexport
+QMAKE_LFLAGS -= -fno-keep-inline-dllexport
+QMAKE_CFLAGS -= -fno-keep-inline-dllexport
+QMAKE_CXXFLAGS_EXCEPTIONS_ON = -fexceptions
+QMAKE_LFLAGS_EXCEPTIONS_ON =
+QMAKE_LFLAGS_CONSOLE =
+
 SOURCES += main.cpp \
     framework/commandcenterbase.cpp \
     framework/eventloop.cpp \
