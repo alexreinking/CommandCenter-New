@@ -63,7 +63,7 @@ private:
 BEGIN_CONFIG(MissionControl)
 MUX("BB-SPIDEV1");
 MUX("BB-UART2");
-MUX("uart4pinmux");
+MUX("uart4pinmux"); // There's no BB-UART3, so this one activates it.
 SUBSYSTEM(TemperatureSensor, "temp",
           unique_ptr<ADCSensor3008>(new ADCSensor3008(7)));
 SUBSYSTEM(TimerSystem<50>, "flash");
