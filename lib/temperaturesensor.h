@@ -8,7 +8,8 @@
 class TemperatureSensor : public Subsystem
 {
 public:
-    TemperatureSensor(Actor *parent, std::string name, std::unique_ptr<ADCSensor3008> adc);
+    TemperatureSensor(Actor *parent, std::string name,
+                      std::unique_ptr<ADCSensor3008> adc);
     void loop();
 
 private:

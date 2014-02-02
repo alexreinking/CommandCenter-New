@@ -22,8 +22,6 @@ ADCSensor3008::ADCSensor3008(int adcNumber)
     if(nInstances == 0) {
         std::lock_guard<std::mutex> lg(spiAdcMutex);
         if(nInstances == 0) {
-            muxConfig("BB-SPI1DEV");
-
             int handle = open("/dev/spidev1.0", O_RDWR);
 
             // Set to SPI Mode 3, data in on falling edge, data out on rising edge

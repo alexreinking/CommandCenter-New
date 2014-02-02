@@ -28,7 +28,7 @@ public:
         }
 
         on<TemperatureEvent>("temp", [&] (TemperatureEvent *evt) {
-//            cout << "Temp = " << evt->temperature << " degrees C." << endl;
+            cout << "Temp = " << evt->temperature << " degrees C." << endl;
         });
 
         on<TimeEvent>("flash", [&] (TimeEvent *evt) {
@@ -61,6 +61,7 @@ private:
 };
 
 BEGIN_CONFIG(MissionControl)
+MUX("BB-SPIDEV1");
 MUX("BB-UART2");
 MUX("uart4pinmux");
 SUBSYSTEM(TemperatureSensor, "temp",
