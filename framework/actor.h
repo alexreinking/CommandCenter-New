@@ -8,6 +8,8 @@
 #include <string>
 #include "eventloop.h"
 using std::shared_ptr;
+using std::make_shared;
+using std::cerr;
 
 typedef std::function<void(Event*)> Callback;
 
@@ -29,7 +31,7 @@ public:
 
     template <typename Sys, typename ...Args>
     void addSubsystem(Args&&... args) {
-        getEventLoop()->addActor(std::make_shared<Sys>(std::forward<Args>(args)...));
+        getEventLoop()->addActor(make_shared<Sys>(std::forward<Args>(args)...));
     }
 
 protected:
@@ -42,7 +44,7 @@ protected:
         callbacks[sender].push_back([callback] (Event *evt) {
             if(Arg *arg = dynamic_cast<Arg*>(evt))
                 callback(arg);
-            else std::cerr << "Failed to cast from " << evt->getSender()->getName()
+            else cerr << "Failed to cast from " << evt->getSender()->getName()
                       << ". Expected " << typeid(Arg).name() << ", got "
                       << typeid(*evt).name() << "." << std::endl;
         });

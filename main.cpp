@@ -61,7 +61,8 @@ private:
 };
 
 BEGIN_CONFIG(MissionControl)
-//MUX("BB-CommandCenter");
+MUX("BB-UART2");
+MUX("uart4pinmux");
 SUBSYSTEM(TemperatureSensor, "temp",
           unique_ptr<ADCSensor3008>(new ADCSensor3008(7)));
 SUBSYSTEM(TimerSystem<50>, "flash");
