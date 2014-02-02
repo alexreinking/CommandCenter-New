@@ -21,7 +21,7 @@ class MissionControl : public CommandCenterBase
 {
 public:
     MissionControl() {
-        init();
+        gpioInit();
         for(auto led : allLeds) {
             pinMode(led, OUTPUT);
             digitalWrite(led, LOW);
