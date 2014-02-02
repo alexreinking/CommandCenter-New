@@ -18,7 +18,7 @@ void TemperatureSensor::loop()
 
     if((adcValue = adc->readConversion()) != -1) {
         double voltage = 5000.0*(double(adcValue)/1023.0); //mV
-        const double v0 = 5000.0*(943.0/1023.0); //mV. A value of 610 maps to 2.98V
+        const double v0 = 5000.0*(610.0/1023.0); //mV. A value of 610 maps to 2.98V
         result = (voltage * 298.0/v0) - 273.15;
     } else {
         result = 50 * ((rand() % 1000) / 1000.0);
