@@ -36,7 +36,10 @@ SOURCES += main.cpp \
     beaglebone/Uart.cpp \
     lib/transceiversystem.cpp \
     beaglebone/crc8.cpp \
-    test/dummyuart.cpp
+    test/dummyuart.cpp \
+    lib/imusystem.cpp \
+    lib/imu/imudecoder.cpp \
+    lib/imu/nmeaParse.cpp
 
 HEADERS += \
     framework/commandcenter.h \
@@ -54,5 +57,8 @@ HEADERS += \
     lib/transceiversystem.h \
     beaglebone/crc8.h \
     beaglebone/TTYDevice.h \
-    test/dummyuart.h
+    test/dummyuart.h \
+    lib/imusystem.h \
+    lib/imu/imudecoder.h \
+    lib/imu/nmeaParse.h
 

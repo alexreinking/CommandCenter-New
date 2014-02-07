@@ -6,21 +6,13 @@
 #include "muxConfig.h"
 
 Uart::Uart(int uartNumber, int32_t baudRate)
+    : uartNumber((uartNumber < 1) ? 1 : ((uartNumber > 5) ? 5 : uartNumber)),
+      baudRate(baudRate)
 {
-    uartNumber = (uartNumber < 1) ? 1 : ((uartNumber > 5) ? 5 : uartNumber);
+}
 
-    char cfgString[] = "BB-UART0";
-    char fileName[] = "/dev/ttyO0";
-    // Play with the characters in the name to get the paths right;
-    cfgString[7] += uartNumber;
-    fileName[9] += uartNumber;
-
-    if (muxConfig(cfgString) == 0)
-        uartHandle = open(fileName, (uartNumber == 3) ? O_WRONLY : O_RDWR);
-
-    if (uartHandle == -1)
-        return;
-
+bool Uart::initialize()
+{
     // This should have been done with macros, shit.
     switch (baudRate)
     {
@@ -52,12 +44,18 @@ Uart::Uart(int uartNumber, int32_t baudRate)
     case 3000000: rate = B3000000; break;
     case 3500000: /* rate = B3500000; */ break;
     case 4000000: /* rate = B4000000; */ break;
-    default: return;
+    default: return false;
     }
-}
 
-bool Uart::initialize()
-{
+    char fileName[] = "/dev/ttyO0";
+    // Play with the characters in the name to get the paths right;
+    fileName[9] += uartNumber;
+
+    uartHandle = open(fileName, (uartNumber == 3) ? O_WRONLY : O_RDWR);
+
+    if (uartHandle == -1)
+        return isInitialized = false;
+
     struct termios terminalOptions;
     tcgetattr(uartHandle, &terminalOptions);
     cfsetispeed(&terminalOptions, rate);
@@ -74,16 +72,21 @@ bool Uart::initialize()
     terminalOptions.c_cc[VTIME] = 0;
     terminalOptions.c_cc[VMIN] = 0;
 
-    return isInitialized = tcsetattr(uartHandle, TCSANOW, &terminalOptions) != -1;
+    if (tcsetattr(uartHandle, TCSANOW, &terminalOptions) == -1)
+        return isInitialized = false;
+
+    return isInitialized = true;
 }
 
 int32_t Uart::readByte()
 {
     if (!isInitialized)
         return -1;
-    uint8_t value = -1;
+
+    uint8_t value;
     int result = read(uartHandle, &value, sizeof(uint8_t));
-    // If we didn't read a single byte... we have a problem,
+
+    // If we didn't read a single byte... we have a problem.
     if (result != sizeof(uint8_t))
         return -1;
     return value;

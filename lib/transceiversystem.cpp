@@ -1,9 +1,10 @@
 #include <iostream>
+#include <thread>
 #include "../beaglebone/crc8.h"
 #include "transceiversystem.h"
 using namespace std;
 
-char getHexOfNibble(char c)
+static char getHexOfNibble(char c)
 {
     c = c & 0x0f;
     if (c < 10) return '0' + c;
@@ -30,7 +31,8 @@ TransceiverSystem::TransceiverSystem(Actor *parent, string name, std::unique_ptr
     tty(move(tty))
 {
     on<TransceiverEvent>([&] (TransceiverEvent *message) {
-        *this->tty << message->tag.c_str() << "^"
+        *this->tty << "Sending: "
+                   << message->tag.c_str() << "^"
                    << message->data.c_str() << ":"
                    << getChecksum(message->tag, message->data) << "\n";
     });

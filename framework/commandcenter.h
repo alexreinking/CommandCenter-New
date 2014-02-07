@@ -13,6 +13,7 @@
 #include <sys/select.h>
 #include <signal.h>
 #include "../beaglebone/muxConfig.h"
+#include "beaglebone/_impl/Gpio.h"
 #include "commandcenterbase.h"
 #include "eventloop.h"
 #include "subsystem.h"
@@ -52,6 +53,7 @@ namespace framework { \
     } \
 };\
 int main() {\
+    gpioInit(); \
     srand(time(NULL)); \
     EventLoop events; \
     framework::sigHandler = [&] (int _) { events.stop(); }; \

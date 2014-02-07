@@ -4,8 +4,9 @@
 #include "lib/temperaturesensor.h"
 #include "lib/transceiversystem.h"
 #include "lib/timersystem.h"
+#include "lib/imusystem.h"
 #include "test/dummyuart.h"
-#include "beaglebone/_impl/Gpio.h"
+#include "beaglebone/Uart.h"
 using namespace std;
 
 #define LED_1 P8_15
@@ -21,7 +22,6 @@ class MissionControl : public CommandCenterBase
 {
 public:
     MissionControl() {
-        gpioInit();
         for(auto led : allLeds) {
             pinMode(led, OUTPUT);
             digitalWrite(led, LOW);
@@ -42,9 +42,9 @@ public:
             if(currentLed < 0) currentLed += 8;
         });
 
-//        on<IMUEvent>("imu", [&] (IMUEvent *evt) {
-//            sendEvent("comm", make_shared<TransceiverEvent>("IM", evt->str));
-//        });
+        on<IMUEvent>("imu", [&] (IMUEvent *evt) {
+            sendEvent("comm", make_shared<TransceiverEvent>("YAW", to_string(evt->data.yaw)));
+        });
     }
 
     ~MissionControl() {
@@ -64,11 +64,11 @@ BEGIN_CONFIG(MissionControl)
 MUX("BB-SPIDEV1");
 MUX("BB-UART2");
 MUX("uart4pinmux"); // There's no BB-UART3, so this one activates it.
-SUBSYSTEM(TemperatureSensor, "temp",
-          unique_ptr<ADCSensor3008>(new ADCSensor3008(7)));
+//SUBSYSTEM(TemperatureSensor, "temp",
+//          unique_ptr<ADCSensor3008>(new ADCSensor3008(7)));
 SUBSYSTEM(TimerSystem<50>, "flash");
-//SUBSYSTEM(IMUSystem, "imu",
-//          unique_ptr<Uart>(new Uart(2, 115200)));
+SUBSYSTEM(IMUSystem, "imu",
+          unique_ptr<Uart>(new Uart(2, 115200)));
 SUBSYSTEM(TransceiverSystem, "comm",
           unique_ptr<TTYDevice>(new DummyUart));
 END_CONFIG

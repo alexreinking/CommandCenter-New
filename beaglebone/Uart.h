@@ -30,6 +30,9 @@ public:
 private:
     speed_t rate;
 
+    int uartNumber;
+    int32_t baudRate;
+
     // File handle to our /dev/ttyO# device
     int uartHandle = -1;
     

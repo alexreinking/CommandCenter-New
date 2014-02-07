@@ -1,7 +1,6 @@
 #ifndef TRANSCEIVERSYSTEM_H
 #define TRANSCEIVERSYSTEM_H
 
-#include "timersystem.h"
 #include "../framework/subsystem.h"
 #include "../beaglebone/TTYDevice.h"
 
