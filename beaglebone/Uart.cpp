@@ -5,15 +5,24 @@
 #include "Uart.h"
 #include "muxConfig.h"
 
+#include <iostream>
+using std::cout;
+using std::endl;
+
 Uart::Uart(int uartNumber, int32_t baudRate)
     : uartNumber((uartNumber < 1) ? 1 : ((uartNumber > 5) ? 5 : uartNumber)),
       baudRate(baudRate)
 {
+    cout << "Uart: Uart: uartNumber = " << uartNumber
+         << " baudRate = " << baudRate << endl;
 }
 
 bool Uart::initialize()
 {
-    // This should have been done with macros, shit.
+    if(isInitialized && uartHandle != -1) {
+        close(uartHandle);
+    }
+
     switch (baudRate)
     {
     case 50:      rate = B50;      break;
@@ -51,10 +60,11 @@ bool Uart::initialize()
     // Play with the characters in the name to get the paths right;
     fileName[9] += uartNumber;
 
+    // This should be a parameter.
     uartHandle = open(fileName, (uartNumber == 3) ? O_WRONLY : O_RDWR);
 
     if (uartHandle == -1)
-        return isInitialized = false;
+        return (isInitialized = false);
 
     struct termios terminalOptions;
     tcgetattr(uartHandle, &terminalOptions);
@@ -73,9 +83,9 @@ bool Uart::initialize()
     terminalOptions.c_cc[VMIN] = 0;
 
     if (tcsetattr(uartHandle, TCSANOW, &terminalOptions) == -1)
-        return isInitialized = false;
+        return (isInitialized = false);
 
-    return isInitialized = true;
+    return (isInitialized = true);
 }
 
 int32_t Uart::readByte()

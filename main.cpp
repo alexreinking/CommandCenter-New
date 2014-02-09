@@ -5,6 +5,7 @@
 #include "lib/transceiversystem.h"
 #include "lib/timersystem.h"
 #include "lib/imusystem.h"
+#include "lib/servosystem.h"
 #include "test/dummyuart.h"
 #include "beaglebone/Uart.h"
 using namespace std;
@@ -29,6 +30,12 @@ public:
 
         on<TemperatureEvent>("temp", [&] (TemperatureEvent *evt) {
             cout << "Temp = " << evt->temperature << " degrees C." << endl;
+        });
+
+        on<TimeEvent>("servoCreep", [&] (TimeEvent *evt) {
+            static int direction = 127;
+            sendEvent("servo", make_shared<ServoEvent>(direction));
+            direction = (direction) ? 0 : 127;
         });
 
         on<TimeEvent>("flash", [&] (TimeEvent *evt) {
@@ -67,8 +74,11 @@ MUX("uart4pinmux"); // There's no BB-UART3, so this one activates it.
 //SUBSYSTEM(TemperatureSensor, "temp",
 //          unique_ptr<ADCSensor3008>(new ADCSensor3008(7)));
 SUBSYSTEM(TimerSystem<50>, "flash");
+SUBSYSTEM(TimerSystem<500>, "servoCreep");
 SUBSYSTEM(IMUSystem, "imu",
           unique_ptr<Uart>(new Uart(2, 115200)));
+SUBSYSTEM(ServoSystem, "servo",
+          unique_ptr<Uart>(new Uart(3, 4800)));
 SUBSYSTEM(TransceiverSystem, "comm",
           unique_ptr<TTYDevice>(new DummyUart));
 END_CONFIG

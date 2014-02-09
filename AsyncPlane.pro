@@ -39,7 +39,8 @@ SOURCES += main.cpp \
     test/dummyuart.cpp \
     lib/imusystem.cpp \
     lib/imu/imudecoder.cpp \
-    lib/imu/nmeaParse.cpp
+    lib/imu/nmeaParse.cpp \
+    lib/servosystem.cpp
 
 HEADERS += \
     framework/commandcenter.h \
@@ -60,5 +61,6 @@ HEADERS += \
     test/dummyuart.h \
     lib/imusystem.h \
     lib/imu/imudecoder.h \
-    lib/imu/nmeaParse.h
+    lib/imu/nmeaParse.h \
+    lib/servosystem.h
 
