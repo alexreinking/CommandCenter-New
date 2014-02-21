@@ -70,7 +70,7 @@ void TransceiverSystem::loop()
         buffer += (char) byte;
         ParseResponse status = parseTag(buffer, tag, data);
         if(status == Success) {
-            cout << "Found tag? " << tag << "\t" << data << endl;
+            cout << "Found tag? " << tag    << "\t" << data << endl;
             buffer = "";
         } else if(status == Failure) {
             buffer = "";

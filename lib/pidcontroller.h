@@ -20,13 +20,13 @@ private:
     long double K_i;
     long double K_d;
     long double servo_command;
-    const long double thresh = 0.1;
+    const long double threshold = 0.1;
     long double integral;
     long double err_cur = 0;
     long double err_prev = 0;
     high_resolution_clock clock;
-    long double t0;
-    long double t1;
+    high_resolution_clock::time_point t0;
+    high_resolution_clock::time_point t1;
     long double target = 0;
 };
 
