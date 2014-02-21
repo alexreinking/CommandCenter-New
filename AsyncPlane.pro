@@ -40,7 +40,8 @@ SOURCES += main.cpp \
     lib/imusystem.cpp \
     lib/imu/imudecoder.cpp \
     lib/imu/nmeaParse.cpp \
-    lib/servosystem.cpp
+    lib/servosystem.cpp \
+    lib/pidcontroller.cpp
 
 HEADERS += \
     framework/commandcenter.h \
@@ -62,5 +63,6 @@ HEADERS += \
     lib/imusystem.h \
     lib/imu/imudecoder.h \
     lib/imu/nmeaParse.h \
-    lib/servosystem.h
+    lib/servosystem.h \
+    lib/pidcontroller.h
 
